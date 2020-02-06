@@ -6,13 +6,13 @@ const nunjucks = require('nunjucks')
 const readDirAsync = promisify(fs.readdir)
 const writeFileAsync = promisify(fs.writeFile)
 
-const themeOptions = {
+const THEME_OPTIONS = {
   logo: './images/logo.png',
   // 'color-theme': 'path/to/my/color-theme.styl',
   'language-tabs': ['json']
 }
 
-const themeConfig = raml2html.getConfigForTheme('raml2html-slate-theme', themeOptions)
+const THEME = raml2html.getConfigForTheme('raml2html-slate-theme', THEME_OPTIONS)
 
 const CONFIGURATION = {
   apisPath: './apis',
@@ -27,7 +27,7 @@ const mainIndexRenderData = {
 
 (async (config) => {
   const renderHTML = async (api) => {
-    return raml2html.render(api, themeConfig, { validate: config.validate })
+    return raml2html.render(api, THEME, { validate: config.validate })
   }
 
   const print = (data, method) => {
