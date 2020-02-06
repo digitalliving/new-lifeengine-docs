@@ -29,10 +29,10 @@ script:
   - npm start
 
   # Publish any keys if necessary
-  - if [ -d keys ]; then cp -R keys ./; fi
+  - if [ -d keys ]; then cp -R keys ./build; fi
 
   # Set up CNAME
-  - echo 'new-docs.lifeengine.io' > ./CNAME
+  - echo 'new-docs.lifeengine.io' > ./build/CNAME
 before_deploy:
   - echo "Ready to deploy following html files:"
   - find . -name "index.html" -not -path "./node_modules/*"
