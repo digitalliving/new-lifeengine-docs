@@ -17,7 +17,7 @@ env:
 git:
   submodules: false
 cache:
-  npm: true
+  npm: false
 install:
   # Install packages
   - npm ci
