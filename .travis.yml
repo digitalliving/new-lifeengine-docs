@@ -42,6 +42,7 @@ deploy:
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
   target-branch: gh-pages
+  local_dir: ./build
   repo: digitalliving/new-lifeengine-docs
   on:
     branch: master

@@ -1,14 +1,17 @@
 const raml2html = require('raml2html')
 const fs = require('fs')
 const { promisify } = require('util')
-const nunjucks = require('nunjucks')
+const rmdir = require('rimraf')
 
 const readDirAsync = promisify(fs.readdir)
 const writeFileAsync = promisify(fs.writeFile)
+const mkdirAsync = promisify(fs.mkdir)
+const rmdirAsync = promisify(rmdir)
 
 const THEME_OPTIONS = {
   logo: './images/logo.png',
   // 'color-theme': 'path/to/my/color-theme.styl',
+  'root-template': './templates/root.nunjucks',
   'language-tabs': ['json']
 }
 
@@ -16,9 +19,9 @@ const THEME = raml2html.getConfigForTheme('raml2html-slate-theme', THEME_OPTIONS
 
 const CONFIGURATION = {
   apisPath: './apis',
+  buildPath: './build',
   // Validate RAML, but it causes errors currently.
-  validate: false,
-  mainIndexPagePath: './index.html'
+  validate: false
 }
 
 const mainIndexRenderData = {
@@ -43,9 +46,19 @@ const mainIndexRenderData = {
   const generateAPIPath = (api, fileName) => {
     return `${config.apisPath}/${api}/docs/${fileName}`
   }
+
+  const generateBuildPath = (api) => {
+    return `${config.buildPath}/${api}`
+  }
+
   print('Running with configuration:', 'info')
   print(config)
   const apis = await readDirAsync(config.apisPath)
+
+  if (fs.existsSync(config.buildPath)) {
+    print(`\nResetting build folder: ${config.buildPath}`)
+    await rmdirAsync(config.buildPath)
+  }
 
   print(`\nFound APIs: ${apis}`)
 
@@ -54,10 +67,11 @@ const mainIndexRenderData = {
 
     const ramlPath = generateAPIPath(api, 'api.raml')
     const html = await renderHTML(ramlPath)
+    const indexPath = generateBuildPath(api, 'index.html')
 
-    const indexPath = generateAPIPath(api, 'index.html')
+    await mkdirAsync(indexPath, { recursive: true })
 
-    await writeFileAsync(indexPath, html)
+    await writeFileAsync(indexPath + '/index.html', html)
 
     mainIndexRenderData.pages.push({ name: api, path: indexPath })
 
@@ -65,9 +79,6 @@ const mainIndexRenderData = {
   }
 
   print('\nGenerating main index page ...')
-  const indexHtml = nunjucks.render('./index.njk', { mainIndexRenderData })
-  await writeFileAsync(config.mainIndexPagePath, indexHtml)
-  print(`Index page was save to ${config.mainIndexPagePath}`)
 
   print('\nDone!')
 })(CONFIGURATION)

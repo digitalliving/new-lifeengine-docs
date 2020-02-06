@@ -23,11 +23,12 @@
   "homepage": "https://github.com/digitalliving/lifeengine-docs#readme",
   "dependencies": {
     "raml2html": "7.5.0",
-    "raml2html-slate-theme": "2.6.0",
+    "rimraf": "3.0.1",
     "xmldom": "0.2.1"
   },
   "devDependencies": {
     "nunjucks": "3.2.0",
+    "raml2html-slate-theme": "git+https://github.com/edanchenkov/raml2html-slate-theme.git",
     "standard": "14.3.1"
   }
 }
