@@ -2,7 +2,6 @@ const raml2html = require('raml2html')
 const fs = require('fs')
 const { promisify } = require('util')
 const rmdir = require('rimraf')
-const path = require('path')
 
 const readDirAsync = promisify(fs.readdir)
 const writeFileAsync = promisify(fs.writeFile)
