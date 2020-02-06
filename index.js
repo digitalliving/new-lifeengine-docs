@@ -2,6 +2,7 @@ const raml2html = require('raml2html')
 const fs = require('fs')
 const { promisify } = require('util')
 const rmdir = require('rimraf')
+const path = require('path')
 
 const readDirAsync = promisify(fs.readdir)
 const writeFileAsync = promisify(fs.writeFile)
@@ -10,16 +11,16 @@ const rmdirAsync = promisify(rmdir)
 
 const THEME_OPTIONS = {
   logo: './images/logo.png',
-  // 'color-theme': 'path/to/my/color-theme.styl',
   'root-template': './templates/root.nunjucks',
   'language-tabs': ['json']
 }
 
-const THEME = raml2html.getConfigForTheme('raml2html-slate-theme', THEME_OPTIONS)
+const THEME_DATA = raml2html.getConfigForTheme('raml2html-slate-theme', THEME_OPTIONS)
 
 const CONFIGURATION = {
   apisPath: './apis',
   buildPath: './build',
+  defaultApi: 'acl',
   // Validate RAML, but it causes errors currently.
   validate: false
 }
@@ -29,8 +30,9 @@ const mainIndexRenderData = {
 };
 
 (async (config) => {
-  const renderHTML = async (api) => {
-    return raml2html.render(api, THEME, { validate: config.validate })
+  const renderHTML = async (api, data) => {
+    THEME_DATA.rootTemplateData = data
+    return raml2html.render(api, THEME_DATA, { validate: config.validate })
   }
 
   const print = (data, method) => {
@@ -51,8 +53,9 @@ const mainIndexRenderData = {
     return `${config.buildPath}/${api}`
   }
 
-  print('Running with configuration:', 'info')
+  print('Running with configuration:')
   print(config)
+  print(THEME_DATA)
   const apis = await readDirAsync(config.apisPath)
 
   if (fs.existsSync(config.buildPath)) {
@@ -60,25 +63,33 @@ const mainIndexRenderData = {
     await rmdirAsync(config.buildPath)
   }
 
-  print(`\nFound APIs: ${apis}`)
+  print('\nAPIs to build documentation for:')
 
-  for await (const api of apis) {
-    print(`\nProcessing ${api} API ...`)
-
-    const ramlPath = generateAPIPath(api, 'api.raml')
-    const html = await renderHTML(ramlPath)
-    const indexPath = generateBuildPath(api, 'index.html')
-
-    await mkdirAsync(indexPath, { recursive: true })
-
-    await writeFileAsync(indexPath + '/index.html', html)
-
-    mainIndexRenderData.pages.push({ name: api, path: indexPath })
-
-    print(`The file ${indexPath} was saved!`)
+  for await (const [i, api] of apis.entries()) {
+    const outputPath = generateBuildPath(api)
+    mainIndexRenderData.pages.push({
+      name: api,
+      outputPath,
+      absolutePath: path.resolve(outputPath)
+    })
+    print(`${i}: ${(api)} -> ${outputPath}`)
   }
 
-  print('\nGenerating main index page ...')
+  for await (const { name, outputPath } of mainIndexRenderData.pages) {
+    print(`\nGenerating documentation for ${name} API ...`)
+    const ramlPath = generateAPIPath(name, 'api.raml')
+    const html = await renderHTML(ramlPath, mainIndexRenderData)
+    await mkdirAsync(outputPath, { recursive: true })
+    await writeFileAsync(outputPath + '/index.html', html)
+
+    if (name === config.defaultApi) {
+      print(`Setting ${name} as default documentation`)
+      await writeFileAsync(config.buildPath + '/index.html', html)
+      print(`Path ${config.buildPath} has been successfully built!`)
+    }
+
+    print(`Path ${outputPath} has been successfully built!`)
+  }
 
   print('\nDone!')
 })(CONFIGURATION)

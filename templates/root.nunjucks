@@ -45,6 +45,11 @@
             {%- endfor %}
           </div>
         {% endif %}
+        {% for page in rootTemplateData.pages -%}
+            <ul>
+              <li><a href="{{ page.absolutePath }}">{{ page.name }}</a></li>
+            </ul>
+        {%- endfor %}
       {% if search %}
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
