@@ -47,7 +47,7 @@
         {% endif %}
         {% for page in rootTemplateData.pages -%}
             <ul>
-              <li><a href="{{ page.absolutePath }}">{{ page.name }}</a></li>
+              <li><a href="{{ page.uri }}">{{ page.name }}</a></li>
             </ul>
         {%- endfor %}
       {% if search %}

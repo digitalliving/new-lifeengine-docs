@@ -70,7 +70,7 @@ const mainIndexRenderData = {
     mainIndexRenderData.pages.push({
       name: api,
       outputPath,
-      absolutePath: path.resolve(outputPath)
+      uri: '/' + api
     })
     print(`${i}: ${(api)} -> ${outputPath}`)
   }
@@ -91,5 +91,6 @@ const mainIndexRenderData = {
     print(`Path ${outputPath} has been successfully built!`)
   }
 
+  print(mainIndexRenderData)
   print('\nDone!')
 })(CONFIGURATION)
