@@ -40,7 +40,6 @@ before_deploy:
 deploy:
   provider: pages
   skip-cleanup: true
-  local-dir: build
   github-token: $GITHUB_TOKEN
   target-branch: gh-pages
   repo: digitalliving/lifeengine-docs
