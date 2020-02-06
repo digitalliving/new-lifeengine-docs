@@ -1,0 +1,186 @@
+'@context':
+  description: The URL to the context for the App
+  type: string
+  example: https://standards.lifeengine.io/v1/Context/Identity/Digital/Software/App
+'@type':
+  description: The type of the identity, MUST be `App`
+  type: string
+  example: App
+'@id':
+  description: The id of the app
+  type: string
+  example: 48bb2858-e2fc-42d3-b44e-35f138b4b02d
+data:
+  description: Any optional key-values for the app, as defined by the context.
+  type: object
+  example: |
+    {
+      "name": "Example Application",
+      "description": "Description of application",
+      "privacyPolicyUrl": "http://example.com/privacy.html",
+      "iconUrl": "http://example.com/icon.png",
+      "webPageUrl": "http://example.com/application.html"
+    }
+  properties:
+    name:
+      description: The name of the app.
+      type: string
+      example: Example Application
+    description?:
+      description: The description of the app
+      type: string
+      example: Description for the application.
+    privacyPolicyUrl?:
+      description: The URL to the application privacy policy.
+      type: string
+      example: http://example.com/privacy.html
+    iconUrl?:
+      description: Optional URL to an icon to show for the application. Dimensions should be 80x80.
+      type: string
+      example: http://example.com/icon.png
+    webPageUrl?:
+      description: Optional URL to the application's web page.
+      type: string
+      example: http://example.com/application.html
+metadata:
+  description: |
+    Metadata about the app, such as when it was created/updated and who
+    created it / updated it.
+  type: object
+  example: |
+    {
+      "createdAt": "2018-12-03T14:33:44",
+      "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+      "updatedAt": "2018-12-03T14:33:44",
+      "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+    }
+  properties:
+    createdAt:
+      description: When the app identity was created.
+      type: datetime
+      example: 2018-12-03T14:33:44
+    createdBy:
+      description: The user's id who created the app identity.
+      type: string
+      example: 56bb2858-e2fc-42d3-b44e-35f138b4b23b
+    updatedAt:
+      description: When the app identity was updated.
+      type: datetime
+      example: 2018-12-03T14:33:44
+    updatedBy:
+      description: The user's id who updated the app identity.
+      type: string
+      example: 56bb2858-e2fc-42d3-b44e-35f138b4b23b
+inLinks:
+  description: List of incoming links to the app identity.
+  type: object[]
+  example: |
+    [
+      {
+        "@context": "https://standards.lifeengine.io/v1/Context/Link",
+        "@type": "Link",
+        "@id": "f4902768-39aa-492d-9d4f-99b5cf13ee2b",
+        "from": "31b5b971-dc50-4c9c-992a-57c0bf016186",
+        "to": "9a403bd7-0511-4f0f-914a-ffb7fdac4105",
+        "data": {},
+        "metadata": {
+          "createdAt": "2019-05-01T12:02:02:32+00:00",
+          "createdBy": "0a52c776-1c9c-42b1-ac03-b64c04abded2",
+          "updatedAt": "2019-05-01T12:02:02:32+00:00",
+          "updatedBy": "0a52c776-1c9c-42b1-ac03-b64c04abded2"
+        }
+      }
+    ]
+outLinks:
+  description: List of outgoing links from the app identity.
+  type: object[]
+  example: |
+    [
+      {
+        "@context": "https://standards.lifeengine.io/v1/Context/Link",
+        "@type": "Link",
+        "@id": "31b5b971-dc50-4c9c-992a-57c0bf016186",
+        "from": "3d3823fa-cb4c-4fd7-9cae-11cb6d741af0",
+        "to": "a32f4446-e9b5-4ed3-8c93-35147dece8f0",
+        "data": {},
+        "metadata": {
+          "createdAt": "2019-05-01T12:02:02:32+00:00",
+          "createdBy": "0a52c776-1c9c-42b1-ac03-b64c04abded2",
+          "updatedAt": "2019-05-01T12:02:02:32+00:00",
+          "updatedBy": "0a52c776-1c9c-42b1-ac03-b64c04abded2"
+        }
+      }
+    ]
+client:
+  description: The OAuth client information
+  type: object
+  example: |
+    {
+      "clientId": "6601afe9-85e4-4fe8-a3c9-1329f15493e1",
+      "clientSecrets": ["Sw4gT3I0oUynpeTN6YGfvFPE8SPj5LC1YNIHfFCF25w"],
+      "scopes": "",
+      "redirectUris": "https://example.com/auth-callback",
+      "defaultScopes": "",
+      "defaultRedirectUri": "https://example.com/auth-callback"
+    }
+  properties:
+    clientId:
+      description: The client id. Used for OAuth flow.
+      type: string
+      example: 6601afe9-85e4-4fe8-a3c9-1329f15493e1
+    clientSecrets:
+      description: |
+        The client secret. Used for signing data e.g. when
+        posting a payload to the PoT Data Broker API.
+      type: array
+      example: |
+        ["Sw4gT3I0oUynpeTN6YGfvFPE8SPj5LC1YNIHfFCF25w"]
+    scopes?:
+      description: The scopes of the OAuth Client. (Not in use at the moment).
+      type: string
+      example: ""
+    redirectUris?:
+      description: |
+        A comma separated list of redirect URIs for the OAuth Client. Only
+        mandatory when creating an App.
+      type: string
+      example: https://example.com/auth-callback
+    defatultScopes?:
+      description: Default scopes to use. (Not in use at the moment).
+      type: string
+      example: ""
+    defaultRedirectUri?:
+      description: |
+        The default redirect URI to use. Only mandatory when
+        creating a new App.
+      type: string
+      example: https://example.com/auth-callback
+token:
+  description: |
+    The JWT token for the OAuth Client. Used for authenticating the App.
+  type: object
+  example: |
+    {
+      "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUz...T79_KYC4Ds",
+      "expires_in": 63072000,
+      "token_type": "Bearer",
+      "refresh_token": "SwGAWsFfT1FZrT92NRJc0MaBp9XrmG"
+    }
+  properties:
+    access_token:
+      description: The actual JWT token, used in the headers.
+      type: string
+      example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUz...T79_KYC4Ds
+    expires_in:
+      description: When the token expires.
+      type: integer
+      example: 63072000
+    token_type:
+      description: The token type. Only supported type is `Bearer`
+      type: string
+      example: Bearer
+    refresh_token:
+      description: |
+        The refresh token. Can be used to create a new access token.
+      type: string
+      example: SwGAWsFfT1FZrT92NRJc0MaBp9XrmG

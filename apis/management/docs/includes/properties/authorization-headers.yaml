@@ -1,0 +1,3 @@
+description: The Authorization header, MUST be `Bearer {{access_token}}`
+type: string
+example: Bearer eyJ0eX....GciOiJSUzI1NiJ9...PAZ0Y1CfL9otucvZtL7UR2qXZjEq8lSX

@@ -1,0 +1,25 @@
+context:
+  description: The context URL
+  type: string
+  example: https://example.com/contexts/type.jsonld
+productCode:
+  description: The product code for the data product.
+  type: string
+  example: product-1
+data:
+  description: Key-value data for the DataProduct identity
+  type: object
+  example: |
+    {
+      "name": "Example DataProduct"
+    }
+  properties:
+    name:
+      description: The name of the DataProduct identity
+      type: string
+      example: Example DataProduct
+groupId:
+  description: |
+    The id of the group the user is a member of, and will be the
+    developer of the data product.
+  type: string

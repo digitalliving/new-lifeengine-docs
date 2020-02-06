@@ -1,0 +1,13 @@
+{
+  "data": {
+    "name": "Example Application",
+    "description": "Description of application",
+    "privacyPolicyUrl": "http://example.com/privacy.html",
+    "iconUrl": "http://example.com/icon.png",
+    "webPageUrl": "http://example.com/application.html"
+  },
+  "redirectUris": "https://example.com/auth-callback",
+  "defaultRedirectUri": "https://example.com/auth-callback",
+  "scopes": "",
+  "defaultScopes": ""
+}

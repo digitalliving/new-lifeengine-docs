@@ -1,0 +1,7 @@
+*.DS_STORE
+
+node_modules
+.idea/
+
+# Exclude all build files
+index.html

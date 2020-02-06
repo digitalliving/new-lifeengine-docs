@@ -1,0 +1,55 @@
+'@context':
+  description: The context URL
+  type: string
+  example: https://example.com/contexts/type.jsonld
+'@type':
+  description: The identity type, DataProduct
+  type: string
+'@id':
+  description: The ID of the data product identity.
+  type: string
+data:
+  description: Key-value data for the DataProduct identity
+  type: object
+  example: |
+    {
+      "name": "Example DataProduct"
+    }
+  properties:
+    name:
+      description: The name of the DataProduct identity
+      type: string
+      example: Example DataProduct
+metadata:
+  description: |
+    Metadata about the app, such as when it was created/updated and who
+    created it / updated it.
+  type: object
+  example: |
+    {
+      "createdAt": "2018-12-03T14:33:44",
+      "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+      "updatedAt": "2018-12-03T14:33:44",
+      "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+    }
+  properties:
+    createdBy:
+      description: The user ID of the user who created this identity
+      type: string
+    updatedBy:
+      description: The user ID of the user who updated this identity
+      type: string
+    createdAt:
+      description: RFC3339 datetime when the identity was created
+      type: datetime
+      example: 2018-02-28T16:41:41.090Z
+    updatedAt:
+      description: RFC3339 datetime when the identity was updated
+      type: datetime
+      example: 2018-02-28T16:41:41.090Z
+inLinks:
+  description: List of incoming links to the identity
+  type: link[]
+outLinks:
+  description: List of outgoing links from the identity
+  type: link[]

@@ -1,0 +1,1001 @@
+#%RAML 1.0
+---
+title: Auth
+version: v1
+baseUri: https://api-sandbox.lifeengine.io/auth/v1
+mediaType: application/json
+/refreshToken:
+  description: |
+    Refresh the access token. Uses the `refresh_token` from the `login` or `authorize` actions.
+  post:
+    description: Generate a new access token by the refresh token.
+    headers:
+      Authorization: !include includes/properties/authorization-basic-headers.yaml
+      Content-Type:
+        description: The content type, MUST be `application/x-www-form-urlencoded`
+        type: string
+        example: application/x-www-form-urlencoded
+      Accept:
+        description: Accept header, MUST be `application/json`.
+        type: string
+        example: application/json
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          grant_type:
+            description: The grant type of the login, MUST be `refresh_token`.
+            type: string
+            example: refresh_token
+          refresh_token:
+            description: The refresh token.
+            type: string
+            example: aEfheuG6wyy
+        example: |
+          grant_type=refresh_token&refresh_token=aEfheuG6wyy
+    responses:
+      200:
+        body:
+          example: !include includes/examples/access_token.json
+      400:
+        body:
+          example: |
+            {
+              "error": "unsupported_grant_type"
+            }
+      401:
+        body:
+          example: |
+            {
+              "error": "invalid_grant"
+            }
+      422:
+        body:
+          example: !include includes/examples/missing_mandatory_data.json
+/validateToken:
+  description: Validate the access token in the Authorization header.
+  post:
+    description: Validates an access token.
+    headers:
+      Authorization: !include includes/properties/authorization-headers.yaml
+    responses:
+      204:
+        body:
+      403:
+        body:
+          example: !include includes/examples/permission_denied.json
+/authorize:
+  description: |
+    The first part of the authorization flow. Creates a new authorization token
+    and returns a redirect URL where the user should be redirected for the authorization
+    flow.
+  post:
+    description: Authorization flow
+    headers:
+      Content-Type:
+        description: The Content-Type header, MUST be `application/x-www-form-urlencoded`
+        type: string
+        example: application/x-www-form-urlencoded
+      Accept:
+        description: The Accept header, MUST be `application/json`
+        type: string
+        example: application/json
+    queryParameters:
+      grant_type:
+        description: The grant type of the authorization flow, MUST be `authorization_code`
+        type: string
+        example: authorization_code
+      response_type:
+        description: The response type for the request, MUST be `code`
+        type: string
+        example: code
+      client_id:
+        description: The client id of the application.
+        type: string
+        example:
+      redirect_uri:
+        description: The redirect URI for the authorization flow.
+        type: string
+        example: https://example.com/auth-callback
+      state?:
+        description: An optional state for the request, could be a CSRF token.
+        type: string
+        example: hG8wg6HoiV6
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          email:
+            description: The user's email address, used for logging in.
+            type: string
+            example: user@example.com
+          password:
+            description: The user's password
+            type: string
+            example: Rr2fn98hdqw_P
+        example: |
+          email=user@example.com&password=Rr2fn98hdqw_P
+    responses:
+      200:
+        body:
+          properties:
+            redirectUrl:
+              description: The redirect URL where to redirect the user back to the application.
+              type: string
+              example: https://example.com/auth-callback?code=<code>&state=<state>
+          example: |
+            {
+              "redirectUrl": "https://example.com/auth-callback?code=b56TQpKdqg6ApFZvtbMhT7ki88Jpvn&state=state",
+              "userId": "7711fae9-85e4-4fe8-a3c9-2319f15493e2"
+            }
+      403:
+        body:
+          description: If the user supplied invalid credentials.
+          example: !include includes/examples/permission_denied.json
+/exchangeToken:
+  description: |
+    Last part of the authorization flow. Converts the authorization code to an
+    access token to be used in the Authorization header.
+  post:
+    description: Authorization flow, convert authorization code to access token.
+    headers:
+      Authorization: !include includes/properties/authorization-basic-headers.yaml
+      Content-Type:
+        description: The Content-Type header, MUST be `application/x-www-form-urlencoded`
+        type: string
+        example: application/x-www-form-urlencoded
+      Accept:
+        description: The Accept header, MUST be `application/json`
+        type: string
+        example: application/json
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          grant_type:
+            description: The grant type of the login, MUST be `authorization_code`.
+            type: string
+            example: authorization_code
+          redirect_uri:
+            description: The redirect URI used in the authorization flow.
+            type: string
+            example: https://example.com/auth-callback
+          code:
+            description: The authorization code to exchange to an access token.
+            type: string
+            example: b56TQpKdqg6ApFZvtbMhT7ki88Jpvn
+          state?:
+            description: The optional state, e.g. CSRF token from the original request.
+            type: string
+            example: hG8wg6HoiV6
+        example: |
+          grant_type=authorization_code&redirect_uri=https://example.com/auth-callback&code=b56TQpKdqg6ApFZvtbMhT7ki88Jpvn&state=hG8wg6HoiV6
+    responses:
+      200:
+        body:
+          properties: !include includes/properties/access_token.yaml
+          example: !include includes/examples/access_token.json
+      400:
+        body:
+          example: |
+            {
+              "error": "invalid_request",
+              "error_description": "Missing code parameter.",
+              "state": "state"
+            }
+      401:
+        body:
+          description: If e.g. the authorization code has expired.
+          example: |
+            {
+              "error": "invalid_grant"
+            }
+      422:
+        body:
+          example: !include includes/examples/missing_mandatory_data.json
+/authorizeApplication:
+  description: Authorizes an application for a user.
+  post:
+    description: Authorizes the application for the given user.
+    headers:
+      x-platform-token:
+        description: |
+          Platform token is used to create the `DeveloperAt` link from the
+          application to the Platform.
+        type: string
+        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...of5sEZBpzWHqjLd2LPsQZX
+      X-APP-AUTHORIZATION-TOKEN:
+        description: |
+          Signed token issued previously to validate sender's intention and data
+          the token carries.
+        type: string
+        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...of5sEZBpzWHqjLd2LPsQZX
+    body:
+      properties:
+        role?:
+          description: |
+            Only sent if authorizing the developer portal. The role MUST be `developer`.
+          type: string
+          example: developer
+    responses:
+      200:
+      422:
+        body:
+          examples:
+            'Invalid header': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Invalid header."
+                }
+              }
+            'Validation failed': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Invalid app authorization token"
+                }
+              } |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Missing X-APP-AUTHORIZATION-TOKEN header"
+                }
+              }
+/clients:
+  description: Manage OAuth clients.
+  /{client_id}:
+    uriParameters:
+      client_id:
+        description: The Client's client_id.
+        type: string
+        example: 6601afe9-85e4-4fe8-a3c9-1329f15493e1
+    get:
+      description: Read a single client's information by given client_id.
+      responses:
+        200:
+          body:
+            example: |
+              {
+                "clientId": "6601afe9-85e4-4fe8-a3c9-1329f15493e1",
+                "scopes": "",
+                "redirectUris": "https://example.com/auth-callback",
+                "defaultScopes": "",
+                "defaultRedirectUri": "https://example.com/auth-callback"
+              }
+        422:
+          body:
+            example: !include includes/examples/not_found.json
+    /secrets:
+      post:
+        description: |
+          Create new `client_secret` for the given app. The system
+          will keep track of the two latest secrets, so when creating a new
+          one, the old is still available for use.
+        headers:
+          Authorization: !include includes/properties/authorization-headers.yaml
+        responses:
+          201:
+            body:
+              example: |
+                {
+                  "clientSecret": "YK45hcnq1D7fsgrvbHkPrIexetnnbqZGPQBV23oVgsA"
+                }
+          400:
+            body:
+              example: |
+                {
+                  "error": {
+                    "status": 400,
+                    "message": "Could not update client with new secret."
+                  }
+                }
+          403:
+            body:
+              example: |
+                {
+                  "error": {
+                    "status": 403,
+                    "message": "Permission denied"
+                  }
+                }
+
+    /authorized/{user_id}:
+      uriParameters:
+        user_id:
+          description: The user's id.
+          type: string
+          example: 747d0af5-6f06-4309-b2d5-f06677356a9a
+      get:
+        description: Check if the user has authorized the given application.
+        headers:
+          x-platform-token:
+            description: |
+              Platform token is required to check if a user has authorized
+              the given application.
+            type: string
+            example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...of5sEZBpzWHqjLd2LPsQZX
+        responses:
+          200:
+          403:
+            body:
+              example: |
+                {
+                    "error": {
+                      "status": 403,
+                      "message": ""
+                    }
+                  }
+          422:
+            body:
+              example: |
+                  {
+                    "error": {
+                      "status": 422,
+                      "message": "Invalid Platform token."
+                    }
+                  }
+
+/apps:
+  description: |
+    App endpoints. Create, read, update, delete apps in the system.
+    Creates the App identity and the OAuth client in the system.
+  get:
+    description: |
+      List all applications where the current user is developer.
+    responses:
+      200:
+        body:
+          example: |
+            {
+              "@context": "https://schema.org/",
+              "@type": "collection",
+              "ItemList": [
+                {
+                  "@context": "https://standards.lifeengine.io/v1/Context/Identity/Digital/Software/App/",
+                  "@type": "App",
+                  "@id": "286042aa-6299-4138-8675-da105dfadefc",
+                  "data": {
+                    "name": "Example Application",
+                    "description": "Application description",
+                    "privacyPolicyUrl": "http://example.com/privacy.html,
+                    "webPageUrl": "http://example.com/application.html",
+                    "iconUrl": "http://example.com/icon.png"
+                  },
+                  "metadata": {
+                    "createdAt": "2018-12-03T14:33:44",
+                    "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                    "updatedAt": "2018-12-03T14:33:44"
+                    "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                  },
+                  "inLinks": [
+                    {
+                      "@context": "https://standards.lifeengine.io/v1/Context/Link/Role/DeveloperOf/",
+                      "@type": "DeveloperOf",
+                      "@id": "a6101e2d-b19c-4cd5-9767-00aa78986a39",
+                      "from": "bfec43ac-a0ce-4469-a78f-3106cf28b4c9",
+                      "to": "286042aa-6299-4138-8675-da105dfadefc",
+                      "data": {},
+                      "metadata": {
+                        "createdAt": "2018-12-03T14:33:44",
+                        "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                        "updatedAt": "2018-12-03T14:33:44"
+                        "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                      }
+                    }
+                  ],
+                  "outLinks": [
+                    {
+                      "@context": "https://standards.lifeengine.io/v1/Context/Link/PublishedOn/",
+                      "@type": "PublishedOn",
+                      "@id": "87a5dee9-0a29-40c7-9972-475ef2c47890",
+                      "from": "286042aa-6299-4138-8675-da105dfadefc",
+                      "to": "10e28dca-3000-4fc5-8b2f-c21bd1893c9d",
+                      "data": {},
+                      "metadata": {
+                        "createdAt": "2018-12-03T14:33:44",
+                        "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                        "updatedAt": "2018-12-03T14:33:44"
+                        "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+  post:
+    description: |
+      Creates a new app and it's associated OAuth Client.
+      NOTE: The `clientSecrets` is shown only once in plain text, when creating
+      the application. Make sure you save it somewhere. The client secret is
+      used for validating the application.
+    headers:
+      Authorization: !include includes/properties/authorization-headers.yaml
+    body:
+      properties: !include includes/properties/app-create.yaml
+      example: !include includes/examples/app-create.json
+    responses:
+      201:
+        body:
+          example: |
+            {
+              "@context": "https://standards.lifeengine.io/v1/Context/Identity/Digital/Software/App/",
+              "@type": "App",
+              "@id": "6601afe9-85e4-4fe8-a3c9-1329f15493e1",
+              "data": {
+                "name": "Example Application",
+                "description": "Application description",
+                "privacyPolicyUrl": "http://example.com/privacy.html,
+                "webPageUrl": "http://example.com/application.html",
+                "iconUrl": "http://example.com/icon.png"
+              },
+              "metadata": {
+                "createdAt": "2018-12-03T14:33:44",
+                "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                "updatedAt": "2018-12-03T14:33:44"
+                "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+              },
+              "inLinks": [
+                {
+                  "@context": "https://standards.lifeengine.io/v1/Context/Link/Role/DeveloperOf/",
+                  "@type": "DeveloperOf",
+                  "@id": "a6101e2d-b19c-4cd5-9767-00aa78986a39",
+                  "from": "bfec43ac-a0ce-4469-a78f-3106cf28b4c9",
+                  "to": "286042aa-6299-4138-8675-da105dfadefc",
+                  "data": {},
+                  "metadata": {
+                    "createdAt": "2018-12-03T14:33:44",
+                    "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                    "updatedAt": "2018-12-03T14:33:44"
+                    "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                  }
+                }
+              ],
+              "outLinks": [
+                {
+                  "@context": "https://standards.lifeengine.io/v1/Context/Link/PublishedOn/",
+                  "@type": "PublishedOn",
+                  "@id": "87a5dee9-0a29-40c7-9972-475ef2c47890",
+                  "from": "286042aa-6299-4138-8675-da105dfadefc",
+                  "to": "10e28dca-3000-4fc5-8b2f-c21bd1893c9d",
+                  "data": {},
+                  "metadata": {
+                    "createdAt": "2018-12-03T14:33:44",
+                    "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                    "updatedAt": "2018-12-03T14:33:44"
+                    "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                  }
+                }
+              ]
+              "client": {
+                "clientId": "6601afe9-85e4-4fe8-a3c9-1329f15493e1",
+                "clientSecrets": ["Sw4gT3I0oUynpeTN6YGfvFPE8SPj5LC1YNIHfFCF25w"],
+                "scopes": "",
+                "redirectUris": "https://example.com/auth-callback",
+                "defaultScopes": "",
+                "defaultRedirectUri": "https://example.com/auth-callback"
+              },
+              "tokens": [
+                {
+                  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUz...T79_KYC4Ds",
+                  "expires_in": 63072000.0,
+                  "token_type": "Bearer",
+                  "refresh_token": "SwGAWsFfT1FZrT92NRJc0MaBp9XrmG"
+                },
+                {
+                  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUz...T53_KYC4Ds",
+                  "expires_in": 63072000.0,
+                  "token_type": "Bearer",
+                  "refresh_token": "SwGAWsFfT1FZrT92NRJc0MaBp9XrmG"
+                }
+              ]
+            }
+      403:
+        body:
+          example: !include includes/examples/permission_denied.json
+      422:
+        body:
+          example: !include includes/examples/missing_mandatory_data.json
+  /{id}:
+    uriParameters:
+      id:
+        description: The ID of the app
+        type: string
+        example: 2584bdd7-1cb2-48ed-a106-2a1b817cf909
+    description: Manage Apps
+    get:
+      description: Read an app's information.
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      responses:
+        200:
+          body:
+            properties: !include includes/properties/app-response.yaml
+            example: !include includes/examples/app-response.json
+        404:
+          body:
+            example: !include includes/examples/not_found.json
+    put:
+      description: |
+        Update an app and it's client. The client secret will not be
+        touched, as it has it's own endpoint.
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      body:
+        properties: !include includes/properties/app-update.yaml
+        example: !include includes/examples/app-update.json
+      responses:
+        200:
+          body:
+            example: |
+              {
+                "@context": "https://standards.lifeengine.io/v1/Context/Identity/Digital/Software/App/",
+                "@type": "App",
+                "@id": "6601afe9-85e4-4fe8-a3c9-1329f15493e1",
+                "data": {
+                  "name": "Example Application",
+                  "description": "Application description",
+                  "privacyPolicyUrl": "http://example.com/privacy.html,
+                  "webPageUrl": "http://example.com/application.html",
+                  "iconUrl": "http://example.com/icon.png"
+                },
+                "metadata": {
+                  "createdAt": "2018-12-03T14:33:44",
+                  "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                  "updatedAt": "2018-12-03T14:33:44"
+                  "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                },
+                "inLinks": [
+                  {
+                    "@context": "https://standards.lifeengine.io/v1/Context/Link/Role/DeveloperOf/",
+                    "@type": "DeveloperOf",
+                    "@id": "a6101e2d-b19c-4cd5-9767-00aa78986a39",
+                    "from": "bfec43ac-a0ce-4469-a78f-3106cf28b4c9",
+                    "to": "286042aa-6299-4138-8675-da105dfadefc",
+                    "data": {},
+                    "metadata": {
+                      "createdAt": "2018-12-03T14:33:44",
+                      "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                      "updatedAt": "2018-12-03T14:33:44"
+                      "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                    }
+                  }
+                ],
+                "outLinks": [
+                  {
+                    "@context": "https://standards.lifeengine.io/v1/Context/Link/PublishedOn/",
+                    "@type": "PublishedOn",
+                    "@id": "87a5dee9-0a29-40c7-9972-475ef2c47890",
+                    "from": "286042aa-6299-4138-8675-da105dfadefc",
+                    "to": "10e28dca-3000-4fc5-8b2f-c21bd1893c9d",
+                    "data": {},
+                    "metadata": {
+                      "createdAt": "2018-12-03T14:33:44",
+                      "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                      "updatedAt": "2018-12-03T14:33:44"
+                      "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+                    }
+                  }
+                ],
+                "client": {
+                  "clientId": "6601afe9-85e4-4fe8-a3c9-1329f15493e1",
+                  "scopes": "",
+                  "redirectUris": "https://example.com/auth-callback",
+                  "defaultScopes": "",
+                  "defaultRedirectUri": "https://example.com/auth-callback"
+                }
+              }
+        403:
+          body:
+            example: !include includes/examples/permission_denied.json
+        404:
+          body:
+            example: !include includes/examples/not_found.json
+        422:
+          body:
+            example: !include includes/examples/missing_mandatory_data.json
+    delete:
+      description: Delete an app.
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      responses:
+        204:
+        404:
+          body:
+            example: !include includes/examples/not_found.json
+/me:
+  description: |
+    Gets the information about the currently logged in user. Uses the OAuth
+    Bearer token from the authorization header.
+  get:
+    headers:
+      Authorization: !include includes/properties/authorization-headers.yaml
+    description: Get information about the currently logged in user.
+    responses:
+      200:
+        body:
+          example: !include includes/examples/user.json
+      403:
+        body:
+          example: !include includes/examples/permission_denied.json
+  put:
+    headers:
+      Authorization: !include includes/properties/authorization-headers.yaml
+    description: |
+      Update current user information. Change password and/or
+      first name and last name
+    body:
+      properties:
+        password?:
+          description: |
+            The user's password. The password MUST be at least 8 characters,
+            but not more than 256 characters long.
+          type: string
+          example: adjoifwe8HhfwOIUho
+        firstName:
+          description: The user's first name
+          type: string
+          example: John
+        lastName:
+          description: The user's last name
+          type: string
+          example: Doe
+      example: |
+        {
+          "password": "ue87hhaHheohoih3308h",
+          "firstName": "John",
+          "lastName": "Doe"
+        }
+    responses:
+      200:
+        body:
+          example: !include includes/examples/user.json
+      403:
+        body:
+          example: !include includes/examples/permission_denied.json
+
+/users:
+  description: User management
+  post:
+    description: Create a new user and it's associated identity.
+    headers:
+      Authorization: !include includes/properties/authorization-headers.yaml
+    body:
+      properties: !include includes/properties/user-create.yaml
+      example: !include includes/examples/user-create.json
+    responses:
+      201:
+        body:
+          example: !include includes/examples/user.json
+      422:
+        body:
+          examples:
+            'Invalid role': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Not a supported user role."
+                }
+              }
+            'Role level too low': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Cannot create user with higher role."
+                }
+              }
+            'Could not create user identity': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Failed to create user identity."
+                }
+              }
+            'Could not create user': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Failed to create user."
+                }
+              }
+  /{id}:
+    uriParameters:
+      id:
+        description: The ID of the user.
+        type: string
+        example: 2584bdd7-1cb2-48ed-a106-2a1b817cf909
+    get:
+      description: Get user information.
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      responses:
+        200:
+          body:
+            example: !include includes/examples/user.json
+        404:
+          body:
+            example: !include includes/examples/not_found.json
+    put:
+      description: Update a user.
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      body:
+        properties: !include includes/properties/user-create.yaml
+        example: !include includes/examples/user-create.json
+      responses:
+        200:
+          body:
+            example: !include includes/examples/user.json
+        404:
+          body:
+            example: !include includes/examples/not_found.json
+        422:
+          body:
+            examples:
+              'Invalid role': |
+                {
+                  "error": {
+                    "status": 422,
+                    "message": "Not a supported user role."
+                  }
+                }
+              'Role level too low': |
+                {
+                  "error": {
+                    "status": 422,
+                    "message": "Cannot create user with higher role."
+                  }
+                }
+              'Could not update user': |
+                {
+                  "error": {
+                    "status": 422,
+                    "message": "Could not update user."
+                  }
+                }
+
+    delete:
+      description: Deletes a user and it's associated identity.
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      responses:
+        204:
+          body:
+/register:
+  description: Register a new user.
+  post:
+    headers:
+      x-platform-token?:
+        description: Needed when creating a developer account.
+        type: string
+        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...of5sEZBpzWHqjLd2LPsQZX
+    description: |
+      Register a user to the platform. This only creates the necessary
+      identities and user models. You have to authorize the user with an
+      application to connect the user to it.
+    body:
+      properties:
+        email:
+          description: The user's email. Used as username.
+          type: string
+          example: user@example.com
+        password:
+          description: |
+            The user's password. The password MUST be at least 8 characters,
+            but not more than 256 characters long.
+          type: string
+          example: Hawyg&jfhw6
+        firstName:
+          description: The user's first name.
+          type: string
+          example: John
+        lastName:
+          description: The user's last name.
+          type: string
+          example: Doe
+        termsAccepted:
+          description: Whether the terms and conditions have been accepted or not.
+          type: boolean
+          example: true
+        role?:
+          description: |
+            The user role, either `user` or `developer`. If not passed, then
+             will default to `user`. When passed the role `developer`, the
+             user account will be created as a developer account.
+          type: string
+          example: user
+      example: |
+        {
+          "email": "user@example.com",
+          "password": "Very_secret!23",
+          "firstName": "John",
+          "lastName": "Doe",
+          "termsAccepted": true
+        }
+    responses:
+      201:
+        body:
+          example: !include includes/examples/user.json
+      422:
+        body:
+          examples:
+            'Password validation fails': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Password validation failed."
+                }
+              }
+            'Could not register user identity': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Could not register user identity."
+                }
+              }
+            'Could not register user': |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Could not register user."
+                }
+              }
+
+/password/reset:
+  post:
+    description: |
+      Start the password reset flow for a user.
+
+      Does one of three possible things:
+      1. Generates a one time token that can be used to reset the password.
+      This should be emailed by the platform to the user.
+      2. Returns info to the platform that the email address was not found.
+      In this case the platform should send an email stating that there was no
+      user associated with the given email address.
+      3. A rate limit is exceeded (doesn't say anything if the user was found
+      or not). In this case the platform should not send any email.
+
+      In all three cases the platform should display the same message to the
+      end user, stating an email was sent with further instructions.
+
+      Note: The platform shall under no circumstance show the response it got
+      back from Lifeengine or the token. If the token is exposed in an error
+      message to the end user it will allow an attacker to break into an
+      account.
+    headers:
+      x-platform-token:
+        description: |
+          Platform token is used to authenticate that the request comes from a
+          trusted platform.
+        type: string
+        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...of5sEZBpzWHqjLd2LPsQZX
+    body:
+      properties:
+        email:
+          description: The user's email.
+          type: string
+          example: user@example.com
+        ip:
+          description: The IP address of the user.
+          type: string
+          example: "127.0.0.1"
+      example: |
+        {
+            "email": "user@example.com",
+            "ip": "127.0.0.1"
+        }
+    responses:
+      201:
+        description: |
+          The token was successfully generated and should be emailed to the user.
+        body:
+          example: |
+            {
+              "token": "069a029f-6ff9-4cf0-ac95-dc8440591a1d"
+            }
+      404:
+        description: [
+          The user was not found, an email indicating this should be sent to
+          the email address.
+      429:
+        description: |
+          Too many requests sent in too short time. No email should be sent.
+
+/password/check_reset_token:
+  post:
+    description: |
+      Check whether a reset code is valid or not.
+    headers:
+      x-platform-token:
+        description: |
+          Platform token is used to authenticate the request comes from a
+          platform.
+        type: string
+        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...of5sEZBpzWHqjLd2LPsQZX
+    body:
+      properties:
+        email:
+          description: The user's email.
+          type: string
+          example: user@example.com
+        ip:
+          description: The IP address of the user.
+          type: string
+          example: 127.0.0.1
+        token:
+          description: The token, as sent in the email to the user.
+          type: string
+          example: 181d5a93-4509-4f00-835c-5cf9e6cd07ec
+      example: |
+        {
+            "email": "user@example.com",
+            "ip": "127.0.0.1",
+            "token": "181d5a93-4509-4f00-835c-5cf9e6cd07ec"
+        }
+    responses:
+      204:
+        description: |
+          The token is valid.
+      403:
+        description: |
+          The token is invalid.
+
+/password/new:
+  post:
+    description: |
+      Sets a new password for the user and invalidates the token.
+
+      The platform should send the user an email indicating the password was
+      successfully changed.
+
+      In case the token is wrong or the password too weak an error will be
+      returned, which should be indicated to the user.
+    headers:
+      x-platform-token:
+        description: |
+          Platform token is used to authenticate that the request comes from a
+          platform.
+        type: string
+        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...of5sEZBpzWHqjLd2LPsQZX
+    body:
+      properties:
+        email:
+          description: The user's email.
+          type: string
+          example: user@example.com
+        ip:
+          description: The IP address of the user.
+          type: string
+          example: 127.0.0.1
+        token:
+          description: The token.
+          type: string
+          example: 181d5a93-4509-4f00-835c-5cf9e6cd07ec
+        password:
+          description: The new password for the user.
+          type: string
+          example: 6X_J&!O50nF-
+      example: |
+        {
+            "email": "user@example.com",
+            "ip": "127.0.0.1",
+            "token": "181d5a93-4509-4f00-835c-5cf9e6cd07ec",
+            "password": "6X_J&!O50nF-"
+        }
+    responses:
+      204:
+        description: |
+          The password reset completed successfully. The platform should send
+          the user an email stating that the password was reset. The email
+          must not contain the new password.
+      403:
+        description: |
+          The token is invalid. This should be indicated to the user.
+      422:
+        description: |
+          The password validation failed. This should be indicated to the user.
+        body:
+          example: |
+            {
+              "error": {
+                "status": 422,
+                "message": "Password validation failed. Password must be between 8 and 256 characters long."
+              }
+            }

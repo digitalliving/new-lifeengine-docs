@@ -1,0 +1,72 @@
+{
+  "inLinks": [
+    {
+      "@context": "https://standards.oftrust.net/v1/Context/Link/OwnerOf/",
+      "@type": "OwnerOf",
+      "@id": "257482d1-56bf-4b5e-abf2-29014ef1eb0a",
+      "from": "e153e200-14d5-43ce-95dc-2db22ac6767f",
+      "to": "00ecc2fe-35fa-4f9c-83d1-a1bab31a0cff",
+      "data": {},
+      "metadata": {
+        "createdAt": "2019-09-17T12:48:17+00:00",
+        "createdBy": "7a6a7b86-4edb-4545-ac2e-edb9c11598d2",
+        "updatedAt": "2019-09-17T12:48:17+00:00",
+        "updatedBy": "7a6a7b86-4edb-4545-ac2e-edb9c11598d2"
+      }
+    }
+  ],
+  "outLinks": [
+    {
+      "@context": "https://standards.oftrust.net/v1/Context/Link/TenantAt/",
+      "@type": "TenantAt",
+      "@id": "257482d1-56bf-4b5e-abf2-29014ef1eb0a",
+      "from": "e153e200-14d5-43ce-95dc-2db22ac6767f",
+      "to": "faecc2fe-35fa-4f9c-43d1-a1bab31a0cfe",
+      "data": {},
+      "metadata": {
+        "createdAt": "2019-09-17T12:48:17+00:00",
+        "createdBy": "7a6a7b86-4edb-4545-ac2e-edb9c11598d2",
+        "updatedAt": "2019-09-17T12:48:17+00:00",
+        "updatedBy": "7a6a7b86-4edb-4545-ac2e-edb9c11598d2"
+      }
+    }
+  ],
+  "pagination": {
+    "inLinks": {
+      "links": [
+        {
+          "rel": "first",
+          "href": "https://api-sandbox.lifeengine.io/identities/v1/e153e200-14d5-43ce-95dc-2db22ac6767f/links?offset=0&limit=100"
+        },
+        {
+          "rel": "self",
+          "href": "https://api-sandbox.lifeengine.io/identities/v1/e153e200-14d5-43ce-95dc-2db22ac6767f/links"
+        },
+        {
+          "rel": "last",
+          "href": "https://api-sandbox.lifeengine.io/identities/v1/e153e200-14d5-43ce-95dc-2db22ac6767f/links?offset=0&limit=100"
+        }
+      ],
+      "hasMore": false,
+      "totalCount": 1
+    },
+    "outLinks": {
+      "links": [
+        {
+          "rel": "first",
+          "href": "https://api-sandbox.lifeengine.io/identities/v1/e153e200-14d5-43ce-95dc-2db22ac6767f/links?offset=0&limit=100"
+        },
+        {
+          "rel": "self",
+          "href": "https://api-sandbox.lifeengine.io/identities/v1/e153e200-14d5-43ce-95dc-2db22ac6767f/links"
+        },
+        {
+          "rel": "last",
+          "href": "https://api-sandbox.lifeengine.io/identities/v1/e153e200-14d5-43ce-95dc-2db22ac6767f/links?offset=0&limit=100"
+        }
+      ],
+      "hasMore": false,
+      "totalCount": 1
+    }
+  }
+}

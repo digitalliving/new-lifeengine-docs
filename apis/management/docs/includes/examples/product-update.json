@@ -1,0 +1,6 @@
+{
+  "context": "https://standards.lifeengine.io/v1/Context/Identity/Thing/HumanWorld/Product/DataProduct",
+  "data": {
+    "name": "Product name"
+  }
+}

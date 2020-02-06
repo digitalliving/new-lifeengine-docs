@@ -1,0 +1,3 @@
+description: The Authorization header, MUST be `Basic base64encode(client_id:client_secret)`
+type: string
+example: Basic ODNjNDBhYmQtOGMwYi00ZTQyLThlODgtNTQ4NmFkYzYxMGQ4OlllaHVpaGZ3cWk0MTJod3FldW80MTJodWgK

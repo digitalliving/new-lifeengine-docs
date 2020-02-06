@@ -1,0 +1,46 @@
+{
+  "@context": "https://standards.lifeengine.io/v1/Context/Identity/Thing/HumanWorld/Product/DataProduct",
+  "@type": "DataProduct",
+  "@id": "7a0ee1b6-fde2-42e4-884c-afbf567a0d2b",
+  "data": {
+    "name": "Product name"
+  },
+  "metadata": {
+    "createdBy": "c9620d09-cd83-476e-91f5-3f3ea730f4b9",
+    "updatedBy": "c9620d09-cd83-476e-91f5-3f3ea730f4b9",
+    "createdAt": "2018-02-28T16:41:41.090Z",
+    "updatedAt": "2018-02-28T16:41:41.090Z"
+  },
+  "inLinks": [
+    {
+      "@context": "https://standards.lifeengine.io/v1/Link/Role/PublishedOn",
+      "@type": "PublishedOn",
+      "@id": "27827dc2-46c0-4f8d-9dd9-9b5e32c5d734",
+      "from": "58422496-5796-4c47-a4a1-88768ea94ea6",
+      "to": "7a0ee1b6-fde2-42e4-884c-afbf567a0d2b",
+      "data": {
+        "productCode": "product-1"
+      },
+      "createdBy": "c9620d09-cd83-476e-91f5-3f3ea730f4b9",
+      "updatedBy": "c9620d09-cd83-476e-91f5-3f3ea730f4b9",
+      "createdAt": "2018-02-28T16:41:41.090Z",
+      "updatedAt": "2018-02-28T16:41:41.090Z"
+    }
+  ],
+  "outLinks": [
+    {
+      "@context": "https://standards.lifeengine.io/v1/Link/DeveloperOf",
+      "@type": "DeveloperOf",
+      "@id": "64c5f4a5-36da-4072-9bee-393a34c9808e",
+      "from": "7a0ee1b6-fde2-42e4-884c-afbf567a0d2b",
+      "to": "58422496-5796-4c47-a4a1-88768ea94ea6",
+      "data": {
+        "productCode": "product-1"
+      },
+      "createdBy": "c9620d09-cd83-476e-91f5-3f3ea730f4b9",
+      "updatedBy": "c9620d09-cd83-476e-91f5-3f3ea730f4b9",
+      "createdAt": "2018-02-28T16:41:41.090Z",
+      "updatedAt": "2018-02-28T16:41:41.090Z"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "lifeengine-docs",
+  "version": "1.0.0",
+  "description": "Life Engine API Docs",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "raml2html": "raml2html",
+    "lint": "standard",
+    "lint:fix": "standard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitalliving/lifeengine-docs.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/digitalliving/lifeengine-docs/issues"
+  },
+  "homepage": "https://github.com/digitalliving/lifeengine-docs#readme",
+  "dependencies": {
+    "raml2html": "7.5.0",
+    "raml2html-slate-theme": "2.6.0",
+    "xmldom": "0.2.1"
+  },
+  "devDependencies": {
+    "nunjucks": "3.2.0",
+    "standard": "14.3.1"
+  }
+}

@@ -1,0 +1,31 @@
+email:
+  description: The user's email. Used as username.
+  type: string
+  example: user@example.com
+password:
+  description: The user's password.
+  type: string
+  example: Hawyg&jfhw6
+role:
+  description: |
+    The user's role, MUST be one of `user`, `superuser`. NOTE: Only superusers can
+    create other superusers.
+  type: string
+  example: user
+firstName:
+  description: The user's first name.
+  type: string
+  example: John
+lastName:
+  description: The user's last name.
+  type: string
+  example: Doe
+data?:
+  description: |
+    Any additional key-value data to be saved for the user, as defined in the
+    context.
+  type: object
+  example: |
+    {
+      "key": "value"
+    }

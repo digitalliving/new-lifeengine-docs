@@ -1,0 +1,32 @@
+{
+  "@context": "https://standards.lifeengine.io/v1/Context/Identity/Digital/Software/App",
+  "@type": "App",
+  "@id": "48bb2858-e2fc-42d3-b44e-35f138b4b02d",
+  "data": {
+    "name": "Example Application"
+  },
+  "metadata": {
+    "createdAt": "2018-12-03T14:33:44",
+    "createdBy": "747d0af5-6f06-4309-b2d5-f06677356a9a",
+    "updatedAt": "2018-12-03T14:33:44",
+    "updatedBy": "747d0af5-6f06-4309-b2d5-f06677356a9a"
+  },
+  "inLinks": [],
+  "outLinks": [],
+  "client": {
+    "clientId": "6601afe9-85e4-4fe8-a3c9-1329f15493e1",
+    "clientSecrets": [
+      "Sw4gT3I0oUynpeTN6YGfvFPE8SPj5LC1YNIHfFCF25w"
+    ],
+    "scopes": "",
+    "redirectUris": "https://example.com/auth-callback",
+    "defaultScopes": "",
+    "defaultRedirectUri": "https://example.com/auth-callback"
+  },
+  "token": {
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUz...T79_KYC4Ds",
+    "expires_in": 63072000,
+    "token_type": "Bearer",
+    "refresh_token": "SwGAWsFfT1FZrT92NRJc0MaBp9XrmG"
+  }
+}

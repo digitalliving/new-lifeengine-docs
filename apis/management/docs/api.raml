@@ -1,0 +1,101 @@
+#%RAML 1.0
+---
+title: Management
+version: v1
+baseUri: https://api-sandbox.lifeengine.io
+mediaType: application/json
+description: |
+  The Management API provides means to simplify and combine often performed
+  actions. Such are for example creating a DataProduct that involves creating
+  both the identity and links between it, the developer and the platform.
+/management/v1/products:
+  description: |
+    Create, read, update and delete DataProducts
+  post:
+    description: |
+        Create a new DataProduct identity and create a Developer type link
+        from the developer identity to it and a Link type link from the
+        platform to the DataProduct.
+    headers:
+      Authorization: !include includes/properties/authorization-headers.yaml
+      X-Platform-Token: !include includes/properties/platform-headers.yaml
+    body:
+      properties: !include includes/properties/product-request.yaml
+      example: !include includes/examples/product-create.json
+    responses:
+      201:
+        body:
+          properties: !include includes/properties/product-response.yaml
+          example: !include includes/examples/product.json
+      404:
+        body:
+          example: |
+            {
+              "error": {
+                "status": 404,
+                "message": "Platform not found"
+              }
+            }
+      422:
+        body:
+          example: |
+            {
+              "error": {
+                "status": 422,
+                "message": "Could not create identity."
+              }
+            }
+  /{id}:
+    description: Read, update and delete data products.
+    uriParameters:
+      id:
+        description: The ID of the DataProduct identity
+        type: string
+        example: 2584bdd7-1cb2-48ed-a106-2a1b817cf909
+    get:
+      description: Read one DataProduct identity by id
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      responses:
+        200:
+          body:
+            properties: !include includes/properties/product-response.yaml
+            example: !include includes/examples/product.json
+        403:
+          body:
+            example: !include includes/examples/unauthorized.json
+    put:
+      description: Update a DataProduct identity by id
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      body:
+        properties: !include includes/properties/product-request.yaml
+        example: !include includes/examples/product-update.json
+      responses:
+        200:
+          body:
+            properties: !include includes/properties/product-response.yaml
+            example: !include includes/examples/product-update.json
+        403:
+          body:
+            example: !include includes/examples/unauthorized.json
+        422:
+          body:
+            example: |
+              {
+                "error": {
+                  "status": 422,
+                  "message": "Could not update identity."
+                }
+              }
+    delete:
+      description: Delete an identity by id
+      headers:
+        Authorization: !include includes/properties/authorization-headers.yaml
+      responses:
+        204:
+          body:
+            example: {}
+        403:
+          body:
+            example: !include includes/examples/unauthorized.json

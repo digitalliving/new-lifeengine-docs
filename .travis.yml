@@ -1,0 +1,48 @@
+dist: xenial
+
+language: node_js
+node_js:
+  - 10
+
+env:
+  global:
+    # Required by code-example-generator tool.
+    # Accepted  values are http and https
+    - SCHEME=https
+    # - host for API testing
+    # - authorization token to use (must be defined in secret env vars in travis-ci)
+    #   should be used as "Bearer ${AUTH_TOKEN}"
+    - HOST=api-sandbox.lifeengine.io AUTH_TOKEN=$TESTING_ACCESS_TOKEN
+
+git:
+  submodules: false
+cache:
+  npm: true
+install:
+  # Install packages
+  - npm ci
+before_script:
+  # Lint and test the code
+  - npm run lint
+script:
+  # Build docs
+  - npm start
+
+  # Publish any keys if necessary
+  - if [ -d keys ]; then cp -R keys ./; fi
+
+  # Set up CNAME
+  - echo 'docs.lifeengine.io' > ./CNAME
+before_deploy:
+  - echo "Ready to deploy following html files:"
+  - find . -name "index.html" -not -path "./node_modules/*"
+# Deploy to GitHub pages.
+deploy:
+  provider: pages
+  skip-cleanup: true
+  local-dir: build
+  github-token: $GITHUB_TOKEN
+  target-branch: gh-pages
+  repo: digitalliving/lifeengine-docs
+  on:
+    branch: master
