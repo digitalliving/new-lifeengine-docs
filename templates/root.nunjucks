@@ -61,12 +61,12 @@
                 <ul class="tocify-header">
                     {% if page.active %}
                     <li class="tocify-item active"><a
-                            href="{{ page.uri }}">{{ page.label }}</a></li>
+                            href="{{ page.uri }}">{{ page.label }} {{version}}</a></li>
                     {% endif %}
 
                     {% if not page.active %}
                     <li class="tocify-item"><a
-                            href="{{ page.uri }}">{{ page.label }}</a></li>
+                            href="{{ page.uri }}">{{ page.label }} {{version}}</a></li>
                     {% endif %}
                 </ul>
             </div>

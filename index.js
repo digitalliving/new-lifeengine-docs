@@ -71,7 +71,7 @@ const mainIndexRenderData = {
     const outputPath = generateBuildPath(api)
     mainIndexRenderData.pages.push({
       name: api,
-      label: `${api.charAt(0).toUpperCase() + api.slice(1)} Documentation`,
+      label: `${api.charAt(0).toUpperCase() + api.slice(1)} API`,
       outputPath,
       uri: PRODUCTION ? '/' + api : path.resolve(outputPath + '/index.html')
     })
