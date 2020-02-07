@@ -102,6 +102,7 @@ const mainIndexRenderData = {
     print(`Path ${outputPath} has been successfully built!`)
   }
 
+  print('\nPages were built:')
   print(mainIndexRenderData)
   print('\nDone!')
 })(CONFIGURATION)
