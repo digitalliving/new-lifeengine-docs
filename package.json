@@ -28,7 +28,6 @@
     "xmldom": "0.2.1"
   },
   "devDependencies": {
-    "nunjucks": "3.2.0",
     "raml2html-slate-theme": "git+https://github.com/edanchenkov/raml2html-slate-theme.git",
     "standard": "14.3.1"
   }
