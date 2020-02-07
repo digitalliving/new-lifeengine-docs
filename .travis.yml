@@ -26,7 +26,7 @@ before_script:
   - npm run lint
 script:
   # Build docs
-  - npm start
+  - npm run build
 
   # Publish any keys if necessary
   - if [ -d keys ]; then cp -R keys ./build; fi

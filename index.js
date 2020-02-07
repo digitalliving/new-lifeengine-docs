@@ -2,11 +2,14 @@ const raml2html = require('raml2html')
 const fs = require('fs')
 const { promisify } = require('util')
 const rmdir = require('rimraf')
+const path = require('path')
 
 const readDirAsync = promisify(fs.readdir)
 const writeFileAsync = promisify(fs.writeFile)
 const mkdirAsync = promisify(fs.mkdir)
 const rmdirAsync = promisify(rmdir)
+
+const PRODUCTION = process.env.NODE_ENV === 'production'
 
 const THEME_OPTIONS = {
   logo: './images/logo.png',
@@ -69,7 +72,7 @@ const mainIndexRenderData = {
     mainIndexRenderData.pages.push({
       name: api,
       outputPath,
-      uri: '/' + api
+      uri: PRODUCTION ? '/' + api : path.resolve(outputPath + '/index.html')
     })
     print(`${i}: ${(api)} -> ${outputPath}`)
   }
