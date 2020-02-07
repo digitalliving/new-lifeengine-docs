@@ -9,6 +9,13 @@
 
         <style type="text/css">{{ css }}</style>
 
+        <style>
+            .tocify-wrapper > img.logo {
+                width: 10rem;
+                margin: 1rem;
+            }
+        </style>
+
         {% include "./js/lib/highlight.min.js.nunjucks" %}
         <script>hljs.initHighlightingOnLoad();</script>
         {% include "./js/lib/jquery.min.js.nunjucks" %}
@@ -39,7 +46,8 @@
       </span>
         </a>
         <div class="tocify-wrapper">
-            <img src='data:{{ logoMime }};base64,{{ logo }}' alt='logo'/>
+            <img class="logo" src='data:{{ logoMime }};base64,{{ logo }}'
+                 alt='logo'/>
             {% if languageTabs %}
             <div class="lang-selector">
                 {% for language in languageTabs -%}
