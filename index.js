@@ -71,6 +71,7 @@ const mainIndexRenderData = {
     const outputPath = generateBuildPath(api)
     mainIndexRenderData.pages.push({
       name: api,
+      label: `${api.charAt(0).toUpperCase() + api.slice(1)} Documentation`,
       outputPath,
       uri: PRODUCTION ? '/' + api : path.resolve(outputPath + '/index.html')
     })
@@ -79,8 +80,16 @@ const mainIndexRenderData = {
 
   for await (const { name, outputPath } of mainIndexRenderData.pages) {
     print(`\nGenerating documentation for ${name} API ...`)
+    const templateData = JSON.parse(JSON.stringify(mainIndexRenderData))
     const ramlPath = generateAPIPath(name, 'api.raml')
-    const html = await renderHTML(ramlPath, mainIndexRenderData)
+
+    // Set active link
+    const foundIndex = templateData.pages.findIndex(p => p.name === name)
+    if (templateData.pages[foundIndex]) {
+      templateData.pages[foundIndex].active = true
+    }
+
+    const html = await renderHTML(ramlPath, templateData)
     await mkdirAsync(outputPath, { recursive: true })
     await writeFileAsync(outputPath + '/index.html', html)
 

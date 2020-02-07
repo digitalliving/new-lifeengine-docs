@@ -49,9 +49,19 @@
             </div>
             {% endif %}
             {% for page in rootTemplateData.pages -%}
-            <ul>
-                <li><a href="{{ page.uri }}">{{ page.name }}</a></li>
-            </ul>
+            <div id="custom-pages">
+                <ul class="tocify-header">
+                    {% if page.active %}
+                    <li class="tocify-item active"><a
+                            href="{{ page.uri }}">{{ page.label }}</a></li>
+                    {% endif %}
+
+                    {% if not page.active %}
+                    <li class="tocify-item"><a
+                            href="{{ page.uri }}">{{ page.label }}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
             {%- endfor %}
             {% if search %}
             <div class="search">
