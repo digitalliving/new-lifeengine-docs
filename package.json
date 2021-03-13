@@ -25,7 +25,7 @@
   "dependencies": {
     "raml2html": "7.5.0",
     "rimraf": "3.0.1",
-    "xmldom": "0.2.1"
+    "xmldom": "0.5.0"
   },
   "devDependencies": {
     "raml2html-slate-theme": "git+https://github.com/edanchenkov/raml2html-slate-theme.git",
